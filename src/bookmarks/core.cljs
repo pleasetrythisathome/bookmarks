@@ -5,8 +5,7 @@
             [om.dom :as dom :include-macros true]
             [weasel.repl :as repl]
             [cljs.core.match]
-            [cljs.core.async :as async :refer [<! >! put! chan]]
-            [bookmarks.websocket :refer [chsk ch-chsk chsk-send! chsk-state]]))
+            [cljs.core.async :as async :refer [<! >! put! chan]]))
 
 (enable-console-print!)
 

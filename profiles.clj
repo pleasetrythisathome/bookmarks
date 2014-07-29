@@ -3,7 +3,7 @@
 
        :cljsbuild
        {:builds {:dev
-                 {:source-paths ["src/cljs"]
+                 {:source-paths ["src"]
                   :compiler {:output-to "resources/public/bookmarks.js"
                              :output-dir "resources/public/out"
                              :optimizations :none
@@ -13,11 +13,8 @@
 
        :injections [(require  '[weasel.repl.websocket :as weasel]
                               '[cemerick.piggieback :as piggieback]
-                              '[clojure.pprint :refer [pprint]]
-                              '[bookmarks.core :refer [-main]])
+                              '[clojure.pprint :refer [pprint]])
                     (defn browser-repl-env []
                       (weasel/repl-env :ip "0.0.0.0" :port 9001))
                     (defn browser-repl []
-                      (piggieback/cljs-repl :repl-env (browser-repl-env)))
-                    (defn run []
-                      (-main))]}}
+                      (piggieback/cljs-repl :repl-env (browser-repl-env)))]}}
