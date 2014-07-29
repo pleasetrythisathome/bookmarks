@@ -1,11 +1,11 @@
 (ns bookmarks.core
-  (:require-macros [cljs.core.match.macros :refer [match]]
-                   [cljs.core.async.macros :as asyncm :refer [go go-loop]])
+  (:require-macros [cljs.core.async.macros :as asyncm :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [weasel.repl :as repl]
-            [cljs.core.match]
-            [cljs.core.async :as async :refer [<! >! put! chan]]))
+            [shodan.console :as console :include-macros true]
+            [cljs.core.async :as async :refer [<! >! put! chan]]
+            [omdev.core :as omdev]))
 
 (enable-console-print!)
 
@@ -15,7 +15,7 @@
 
 (def app-state (atom {:text "Hello world!"}))
 
-(om/root
+(omdev/dev-component
   (fn [app owner]
     (dom/h1 nil (:text app)))
   app-state
