@@ -5,7 +5,8 @@
             [weasel.repl :as repl]
             [shodan.console :as console :include-macros true]
             [cljs.core.async :as async :refer [<! >! put! chan]]
-            [omdev.core :as omdev]))
+            [omdev.core :as omdev]
+            [bookmarks.tabs :refer [navigate-current]]))
 
 (enable-console-print!)
 
