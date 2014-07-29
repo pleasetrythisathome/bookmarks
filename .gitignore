@@ -25,3 +25,4 @@ pom.xml*
 .DS_Store
 
 .sass-cache/
+*.map
