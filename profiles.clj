@@ -5,9 +5,9 @@
        {:builds {:dev
                  {:source-paths ["src"]
                   :compiler {:output-to "resources/public/bookmarks.js"
+                             :source-map "resources/public/bookmarks.js.map"
                              :output-dir "resources/public/out"
-                             :optimizations :none
-                             :source-map true}}}}
+                             :optimizations :none}}
 
        :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
