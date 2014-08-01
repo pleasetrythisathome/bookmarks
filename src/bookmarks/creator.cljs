@@ -12,5 +12,6 @@
     om/IRender
     (render [this]
       (html
-       [:div {:id "creator"}
+       [:div {:id "creator"
+              :class "padding-double"}
         "This is the creator view"]))))

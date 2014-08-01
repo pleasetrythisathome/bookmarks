@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :as asyncm :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [clojure.string :refer [split join blank?]]
+            [clojure.string :as string]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :as async :refer [<! >! put! chan]]))
 
@@ -28,6 +28,10 @@
                  out))
              {}
              m))
+
+(defn make-vector [v]
+  (cond-> v
+          keyword? vector))
 
 (defn input [data owner {:keys [korks
                                 placeholder
@@ -67,14 +71,12 @@
        :error false})
     om/IRenderState
     (render-state [this {:keys [disabled error checked]}]
-      (let [korks (if (keyword? korks)
-                    (vector korks)
-                    korks)
+      (let [korks (make-vector korks)
             value (get-in data korks)]
         (html
          [:label {:class label-class}
           [:input (merge {:class (cond-> input-class
-                                         (not (blank? icon)) (str " offset")
+                                         (not (string/blank? icon)) (str " offset")
                                          error (str " error"))
                           :on-change (comp on-change get-value)
                           :on-key-down (fn [e]
@@ -95,7 +97,7 @@
            [:span]]
           [:span {:class "label"}
            label]
-          (when-not (blank? icon)
+          (when-not (string/blank? icon)
             [:i {:class (str "absolute left " icon)}])])))))
 
 (defn form [app owner {:keys [inputs
@@ -105,13 +107,14 @@
     om/IInitState
     (init-state [this]
       (reduce (fn [state {:keys [korks]}]
-                (assoc-in state korks nil))
+                (assoc-in state (make-vector korks) nil))
               {}
               inputs))
     om/IRenderState
     (render-state [this state]
       (html
-       [:form {:on-submit (fn [e]
+       [:form {:class "pure-form"
+               :on-submit (fn [e]
                             (.preventDefault e)
                             (on-submit state))}
         (let [cmps (map (fn [{:keys [korks] :as opts}]
@@ -119,4 +122,4 @@
                                                  :opts (merge opts
                                                               {:on-change (partial om/set-state! owner korks)})}))
                         inputs)]
-          (render-fn (zip-map (mapv :id inputs) cmps)))]))))
+          (render-fn (zipmap (mapv :id inputs) cmps)))]))))

@@ -35,7 +35,7 @@
 (defn render
   "Renders the app to the DOM. idempotent!"
   []
-  (omdev/dev-component
+  (om/root ;;omdev/dev-component
    app-view
    app-state
    {:target (. js/document (getElementById "app"))}))
