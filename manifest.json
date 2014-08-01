@@ -5,14 +5,14 @@
   "description": "A simple extension for quickly saving and recalling tabs without using system resources",
   "browser_action": {
     "default_icon": "icon.png",
-    "default_popup": "resources/public/index.html"
+    "default_popup": "resources/public/creator.html"
   },
   "permissions": [
     "bookmarks",
     "tabs"
   ],
   "chrome_url_overrides" : {
-    "newtab": "resources/public/index.html"
+    "newtab": "resources/public/manager.html"
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

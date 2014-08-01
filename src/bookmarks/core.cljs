@@ -2,11 +2,12 @@
   (:require-macros [cljs.core.async.macros :as asyncm :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [goog.dom :as gdom]
             [weasel.repl :as repl]
             [shodan.console :as console :include-macros true]
             [cljs.core.async :as async :refer [<! >! put! chan]]
             [omdev.core :as omdev]
-            [bookmarks.tabs :refer [navigate-current]]))
+            [sablono.core :as html :refer-macros [html]]))
 
 (enable-console-print!)
 
@@ -14,10 +15,30 @@
 (when-not (repl/alive?)
   (repl/connect "ws://localhost:9001" :verbose true))
 
-(def app-state (atom {:text "Hello world!"}))
+(declare app-container
+         app-state)
 
-(omdev/dev-component
-  (fn [app owner]
-    (dom/h1 nil (:text app)))
-  app-state
-  {:target (. js/document (getElementById "app"))})
+(defn app-view [{:keys [mode] :as data} owner]
+  (reify
+    om/IRender
+    (render [this]
+      (html
+       [:div
+        (name mode)]))))
+
+(defn render
+  "Renders the app to the DOM. idempotent!"
+  []
+  (omdev/dev-component
+   app-view
+   app-state
+   {:target (. js/document (getElementById "app"))}))
+
+(defn ^:export init
+  "initializes the "
+  [app-id mode]
+  (->> app-id
+       gdom/getElement
+       (set! app-container))
+  (set! app-state (atom {:mode (keyword mode)}))
+  (render))
