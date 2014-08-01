@@ -2,12 +2,14 @@
   (:require-macros [cljs.core.async.macros :as asyncm :refer [go go-loop]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [sablono.core :as html :refer-macros [html]]
             [goog.dom :as gdom]
             [weasel.repl :as repl]
             [shodan.console :as console :include-macros true]
             [cljs.core.async :as async :refer [<! >! put! chan]]
             [omdev.core :as omdev]
-            [sablono.core :as html :refer-macros [html]]))
+            [bookmarks.creator :refer [creator-view]]
+            [bookmarks.manager :refer [manager-view]]))
 
 (enable-console-print!)
 
@@ -18,13 +20,17 @@
 (declare app-container
          app-state)
 
+(defmulti mode-view :mode)
+(defmethod mode-view :creator [data]
+  creator-view)
+(defmethod mode-view :manager [data]
+  manager-view)
+
 (defn app-view [{:keys [mode] :as data} owner]
   (reify
     om/IRender
     (render [this]
-      (html
-       [:div
-        (name mode)]))))
+      (om/build (mode-view data) data))))
 
 (defn render
   "Renders the app to the DOM. idempotent!"
