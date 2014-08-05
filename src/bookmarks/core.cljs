@@ -7,6 +7,7 @@
             [weasel.repl :as repl]
             [shodan.console :as console :include-macros true]
             [cljs.core.async :as async :refer [<! >! put! chan]]
+            [clojure.set :as set]
             [omdev.core :as omdev]
             [ankha.core :as ankha]
             [bookmarks.creator :refer [creator-view]]
@@ -43,6 +44,22 @@
       (merge {"labels" [(get item "parentId")]
               "ids" [(get item "id")]})))
 
+(defn merge-bookmarks [new]
+  (fn [old]
+    (letfn [(make-url-keys [items]
+              (zipmap (map :url items) items))]
+      (let [url-keys {:old (make-url-keys old)
+                      :new (make-url-keys new)}
+            shared (apply set/intersection (map (comp set keys) (vals url-keys)))
+            merged (map (fn [url]
+                          (let [old (get-in url-keys [:old url])
+                                {:keys [labels ids]} (get-in url-keys [:new url])]
+                            (-> old
+                                (update-in "labels" conj labels)
+                                (update-in "ids" conj ids))))
+                        (seq shared))]))
+    (concat old new)))
+
 (defn app-view [{:keys [mode] :as app} owner]
   (reify
     om/IWillMount
@@ -52,8 +69,7 @@
          (om/update! app :labels labels)
          (doseq [{:strs [id]} labels]
            (let [items (mapv create-bookmark (<! (bmarks/get-children id)))]
-             (om/transact! app :items (fn [all]
-                                        (concat all items))))))))
+             (om/transact! app :items (merge-bookmarks items)))))))
     om/IRender
     (render [this]
       (html
