@@ -21,4 +21,4 @@
   "opens a url in the current tab"
   [url]
   (go
-   (update-tab-url (.-id (<! (get-current-tab))))))
+   (update-tab-url (.-id (<! (get-current-tab))) url)))
